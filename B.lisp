@@ -19,9 +19,7 @@
 	  )))))
 
 (defun maxpaths (B)
-  (let ((max 1))
-    (dotimes (k (- B 2) max)
-      (incf max max))))
+  (ash 1 (max (- B 2) 0)))
 
 (defun slides (B M)
   (cond ((= B 0)
