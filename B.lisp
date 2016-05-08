@@ -29,9 +29,6 @@
 	 (ecase M (1 (list 0))))
 	((> M (maxpaths B))
 	 nil)
-	((< M (maxpaths B))
-	 (cons (ash M 1)
-	       (slides (1- B) (maxpaths (1- B)))))
 	(t
-	 (cons (- (* M 2) 1)
+	 (cons (if (< M (maxpaths B)) (ash M 1) (- (* M 2) 1))
 	       (slides (1- B) (maxpaths (1- B)))))))
