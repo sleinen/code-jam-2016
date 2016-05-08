@@ -1,0 +1,23 @@
+(defun C (basename)
+  (with-open-file (file (format nil "~A.in" basename))
+    (with-open-file (output (format nil "~A.out" basename)
+			    :direction :output
+			    :if-does-not-exist :create
+			    :if-exists :supersede)
+      (let ((ncases (read file)))
+	(dotimes (k ncases)
+	  (let ((n-topics (read file)))
+	    (let ((topics '()))
+	      (dotimes (k n-topics)
+		(push (cons (read file) (read file)) topics))
+	      (format output "Case #~D: ~A~%" (1+ k) (max-fake topics)))))))))
+
+(defun max-fake (topics)
+  (let ((c1 '()) (c2 '()))
+    (dolist (topic topics)
+      (let ((t1 (car topic)) (t2 (cdr topic)))
+	(incf (getf c1 t1 0))
+	(incf (getf c2 t2 0))))
+    (let ((min-nonfake (max (truncate (length c1) 2)
+			    (truncate (length c2) 2))))
+      (- (length topics) min-nonfake))))

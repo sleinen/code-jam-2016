@@ -1,0 +1,56 @@
+(defun B (basename)
+  (with-open-file (file (format nil "~A.in" basename))
+    (with-open-file (output (format nil "~A.out" basename)
+			    :direction :output
+			    :if-does-not-exist :create
+			    :if-exists :supersede)
+      (let ((ncases (read file)))
+	(dotimes (k ncases)
+	  (let ((S (read-line file)))
+	    (let ((space-pos (position #\Space S)))
+	      (let ((C (subseq S 0 space-pos))
+		    (J (subseq S (1+ space-pos))))
+		(multiple-value-bind (cprime jprime)
+		    (closest-states C J)
+		  (format output "Case #~D: ~A ~A~%" (1+ k)
+			  cprime jprime))))))))))
+
+(defun closest-states (C J)
+  (multiple-value-bind (cprime jprime)
+      (mindiff-0 (coerce C 'list) (coerce J 'list))
+    (values (format nil "~v,'0D" (length C) cprime)
+	    (format nil "~v,'0D" (length C) jprime))))
+
+(defun mindiff-0 (c j)
+  (mindiff (mapcar #'(lambda (k) (or (digit-char-p k) k)) c)
+	   (mapcar #'(lambda (k) (or (digit-char-p k) k)) j)))
+
+(defun mindiff (c j)
+  (mindiff-1 c j '((0 . 0))))
+
+(defun mindiff-1 (c j pairs)
+  (cond ((endp c)
+	 (let ((diffs (mapcar #'(lambda (pair)
+				  (abs (- (car pair) (cdr pair))))
+			      pairs)))
+	   (let ((min-diff (reduce #'min diffs)))
+	     (let ((min-pairs (remove min-diff pairs
+				      :key #'(lambda (pair) (abs (- (car pair) (cdr pair))))
+				      :test-not #'=)))
+	       (assert (not (endp min-pairs)))
+	       (assert (endp (rest min-pairs)))))))
+	(
+	 (let ((d1 (abs (- c1 j1)))
+	       (d2 (abs (- c2 j2))))
+	   (cond ((< d1 d2)
+		  (values c1 j1))
+		 ((> d1 d2)
+		  (values c2 j2))
+		 ((< (min c1 j1) (min c2 j2))
+		  (values c1 j1))
+		 (t
+		  (values c2 j2)))))
+	(t (mindiff-1
+	    (rest c)
+	    (rest j)
+	    ))
