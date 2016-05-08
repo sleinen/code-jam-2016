@@ -10,13 +10,10 @@
 		 (M (read file)))
 	    (let ((matrix (slides B M)))
 	      (if matrix
-		  (progn
-		    (format output "Case #~D: POSSIBLE~%~{~A~%~}" (1+ k)
-			    (mapcar #'(lambda (x) (format nil "~v,'0B" B x))
-				    matrix))
-		    )
-		  (format output "Case #~D: IMPOSSIBLE~%" (1+ k)))))
-	  )))))
+		  (format output "Case #~D: POSSIBLE~%~{~A~%~}" (1+ k)
+			  (mapcar #'(lambda (x) (format nil "~v,'0B" B x))
+				  matrix))
+		  (format output "Case #~D: IMPOSSIBLE~%" (1+ k))))))))))
 
 (defun maxpaths (B)
   (ash 1 (max (- B 2) 0)))
