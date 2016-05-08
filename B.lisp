@@ -22,10 +22,7 @@
   (ash 1 (max (- B 2) 0)))
 
 (defun slides (B M)
-  (cond ((= B 0)
-	 (assert (= M 1))
-	 '())
-	((= B 1)
+  (cond ((= B 1)
 	 (ecase M (1 (list 0))))
 	((> M (maxpaths B))
 	 nil)
